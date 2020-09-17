@@ -1,0 +1,38 @@
+<html>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+	<script>
+	// To bypass errors (“Tainted canvases may not be exported” or “SecurityError: The operation is insecure”)
+	// The browser must load the image via non-authenticated request and following CORS headers
+	var img = new Image();
+	img.crossOrigin = 'Anonymous';
+
+	// The magic begins after the image is successfully loaded
+	img.onload = function () {
+	  var canvas = document.createElement('canvas'),
+		ctx = canvas.getContext('2d');
+
+	  canvas.height = img.naturalHeight;
+	  canvas.width = img.naturalWidth;
+	  ctx.drawImage(img, 0, 0);
+
+	  // Unfortunately, we cannot keep the original image type, so all images will be converted to PNG
+	  // For this reason, we cannot get the original Base64 string
+	  var uri = canvas.toDataURL('image/png'),
+		b64 = uri.replace(/^data:image.+;base64,/, '');
+
+	  alert(b64); //-> "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWP4z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg=="
+	};
+
+	// If you are loading images from a remote server, be sure to configure “Access-Control-Allow-Origin”
+	// For example, the following image can be loaded from anywhere.
+	var url = 'https://www.bigbasket.com/media/uploads/p/l/126906_6-aashirvaad-atta-whole-wheat.jpg';
+	
+	
+	function convertB64(){
+		img.src = url;
+	}
+	</script>
+	<button onclick="convertB64()">Convert Base 64</button>
+	
+</html>
+
